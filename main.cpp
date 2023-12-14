@@ -4,6 +4,7 @@
 #define LEVEL1_WIDTH 14
 #define LEVEL1_HEIGHT 8
 #define LEVEL1_LEFT_EDGE 5.0f
+#define LEVEL1_BOTTOM_EDGE -3.0f
 
 #ifdef _WINDOWS
 #include <GL/glew.h>
@@ -27,13 +28,15 @@
 #include "LevelB.h"
 #include "LevelC.h"
 
-// ––––– CONSTANTS ––––– //
-const int WINDOW_WIDTH  = 640,
-          WINDOW_HEIGHT = 480;
+using namespace std;
 
-const float BG_RED     = 0.1922f,
-            BG_BLUE    = 0.549f,
-            BG_GREEN   = 0.9059f,
+// ––––– CONSTANTS ––––– //
+const int WINDOW_WIDTH  = 640 *1.5,
+          WINDOW_HEIGHT = 480 *1.5;
+
+const float BG_RED     = 0.0f,
+            BG_BLUE    = 0.0f,
+            BG_GREEN   = 0.0f,
             BG_OPACITY = 1.0f;
 
 const int VIEWPORT_X = 0,
@@ -76,6 +79,10 @@ int g_real_death_counter = 0;
 int g_lives_left = 3;
 int g_total_lives = 3;
 
+int g_real_keys_counter = 0;
+int g_keys_left = 15;
+int g_total_keys = 15;
+
 // ––––– GENERAL FUNCTIONS ––––– //
 
 void sleep(float seconds){
@@ -113,10 +120,11 @@ void initialise()
 
     g_view_matrix = glm::mat4(1.0f);
     g_projection_matrix = glm::ortho(-5.0f, 5.0f, -3.75f, 3.75f, -1.0f, 1.0f);
-
+    
     g_shader_program.set_projection_matrix(g_projection_matrix);
     g_shader_program.set_view_matrix(g_view_matrix);
-
+    
+    
     glUseProgram(g_shader_program.get_program_id());
 
     glClearColor(BG_RED, BG_BLUE, BG_GREEN, BG_OPACITY);
@@ -124,6 +132,7 @@ void initialise()
     // enable blending
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
     g_text_texture_id = Utility::load_texture(FONT_FILEPATH);
 
     g_start = new START();
@@ -165,11 +174,11 @@ void process_input()
                         
                     case SDLK_SPACE:
                         // Jump
-                        if (g_current_scene->m_state.player->m_collided_bottom)
-                        {
+//                        if (g_current_scene->m_state.player->m_collided_bottom)
+//                        {
                             g_current_scene->m_state.player->m_is_jumping = true;
                             Mix_PlayChannel(-1, g_current_scene->m_state.jump_sfx, 0);
-                        }
+//                        }
                         break;
                     case SDLK_RETURN:
                         // From start screen to level 1
@@ -199,6 +208,16 @@ void process_input()
         g_current_scene->m_state.player->move_right();
         g_current_scene->m_state.player->m_animation_indices = g_current_scene->m_state.player->m_walking[g_current_scene->m_state.player->RIGHT];
     }
+    else if (key_state[SDL_SCANCODE_DOWN])
+    {
+        g_current_scene->m_state.player->move_down();
+        g_current_scene->m_state.player->m_animation_indices = g_current_scene->m_state.player->m_walking[g_current_scene->m_state.player->DOWN];
+    }
+    else if (key_state[SDL_SCANCODE_UP])
+    {
+        g_current_scene->m_state.player->move_up();
+        g_current_scene->m_state.player->m_animation_indices = g_current_scene->m_state.player->m_walking[g_current_scene->m_state.player->UP];
+    }
     
     if (glm::length(g_current_scene->m_state.player->get_movement()) > 1.0f)
     {
@@ -226,23 +245,27 @@ void update()
     
     while (delta_time >= FIXED_TIMESTEP) {
         g_current_scene->update(FIXED_TIMESTEP);
-        
-        
-//        if (g_is_colliding_bottom == false && g_current_scene->m_state.player->m_collided_bottom) g_effects->start(SHAKE, 1.0f);
-        
         g_is_colliding_bottom = g_current_scene->m_state.player->m_collided_bottom;
-        
         delta_time -= FIXED_TIMESTEP;
     }
     
     g_accumulator = delta_time;
-//    std::cout << "Killed Enemies: " << g_current_scene->m_state.player->m_killed_enemies << std::endl;
+    
     // Prevent the camera from showing anything outside of the "edge" of the level
     g_view_matrix = glm::mat4(1.0f);
     if (g_current_scene->m_state.player->get_position().x > LEVEL1_LEFT_EDGE) {
         g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-g_current_scene->m_state.player->get_position().x, 3.75, 0));
-    } else {
+    }
+    else {
         g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-5, 3.75, 0));
+    }
+    
+    // Prevent the camera from showing anything outside of the "bottom" of the level
+    if (g_current_scene->m_state.player->get_position().y < LEVEL1_BOTTOM_EDGE) {
+        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(0, -g_current_scene->m_state.player->get_position().y + -3.75f, 0));
+    }
+    else {
+        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(0, -3.75f, 0));  // Adjust the fixed vertical position as needed
     }
     
     // Keeping track of death count
@@ -254,9 +277,23 @@ void update()
     }
     g_lives_left = g_total_lives - g_real_death_counter;
     
-    std::cout << "lives_left: " << g_lives_left << std::endl;
+    // Keeping track of key count
+    if (g_real_keys_counter > g_current_scene->m_state.player->m_keys_count && g_current_scene->m_state.player->m_keys_count == 0) {
+        g_current_scene->m_state.player->m_keys_count = g_real_keys_counter;
+    }
+    if (g_real_keys_counter != g_current_scene->m_state.player->m_keys_count) {
+        g_real_keys_counter = g_current_scene->m_state.player->m_keys_count;
+    }
+    g_keys_left = g_total_keys - g_real_keys_counter;
+    
+    cout << "keys left: " << g_keys_left << endl;
     
     //Switching Scenes//
+    if (g_current_scene == g_levelA){
+        if (g_current_scene->m_state.player->get_position().x >= 7.94f && g_current_scene->m_state.player->get_position().x <= 8.01f && g_current_scene->m_state.player->get_position().y == -5.9f){
+            switch_to_scene(g_levelB);
+        }
+    }
     if (g_current_scene->m_state.player->get_position().y < -10.0f) {
         if ((g_current_scene == g_levelA || g_current_scene == g_levelB) &&
             g_current_scene->m_state.player->m_killed_enemies == g_current_scene->m_number_of_enemies) {
@@ -271,24 +308,25 @@ void update()
 
 void render()
 {
+//    g_view_matrix = glm::translate(glm::mat4(1.0f), -glm::vec3(8.0f, -3.0f, 0.0f));
     g_shader_program.set_view_matrix(g_view_matrix);
     glClear(GL_COLOR_BUFFER_BIT);
  
     glUseProgram(g_shader_program.get_program_id());
     g_current_scene->render(&g_shader_program);
     
-//    Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("Press Enter to start"), .5f, 0.0f, glm::vec3(2.0f, -1.0f, 0.0f));
-//     MENU SCREEN //
+    
+    //  MENU SCREEN  //
     if (g_current_scene == g_start) {
         Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("Press Enter to Start"), .34f, 0.0f, glm::vec3(3.0f, -3.0f, 0.0f));
     }
-    // Player has no more lives left
+    // Player has no more lives left //
     if (g_lives_left <= 0) {
         Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("You Lose!"), .54f, 0.0f, glm::vec3(5.0f, -3.0f, 0.0f));
         g_game_is_actually_running = false;
     }
 
-    // Player wins the game
+    // Player wins the game //
     if (g_current_scene == g_levelC && g_current_scene->m_state.player->m_killed_enemies == g_current_scene->m_number_of_enemies)
     {
         Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("You Win!"), .54f, 0.0f, glm::vec3(5.0f, -3.0f, 0.0f));
@@ -319,9 +357,6 @@ int main(int argc, char* argv[])
     {
         process_input();
         update();
-        
-//        if (g_current_scene->m_state.next_scene_id >= 0) switch_to_scene(g_levels[g_current_scene->m_state.next_scene_id]);
-        
         render();
     }
     

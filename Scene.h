@@ -21,6 +21,7 @@ struct GameState
     Map    *map;
     Entity *player;
     Entity *enemies;
+    Entity *keys;
     
     Mix_Music *bgm;
     Mix_Chunk *jump_sfx;

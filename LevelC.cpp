@@ -42,7 +42,7 @@ void LevelC::initialise()
     m_state.player->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
     m_state.player->set_movement(glm::vec3(0.0f));
     m_state.player->set_speed(2.5f);
-    m_state.player->set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
+//    m_state.player->set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
     m_state.player->m_texture_id = Utility::load_texture("assets/images/him.png");
     
     // Walking

@@ -1,20 +1,21 @@
 #include "Start.h"
 #include "Utility.h"
 
-#define LEVEL_WIDTH 14
+#define LEVEL_WIDTH 30
 #define LEVEL_HEIGHT 8
 
 unsigned int START_DATA[] =
 {
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
-    3, 32, 32, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
-    3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+    258, 70, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    258, 70, 1, 1, 1, 1, 517, 19, 20, 21, 517, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+    258, 0, 768, 1, 1, 1, 517,83, 84, 85, 517, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+    258, 258, 0, 1, 1, 1,517, 147,148,149, 517, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+    258, 70, 1, 1, 1, 1, 517, 211, 212, 213, 517, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+    258, 1, 1, 1, 1, 517, 519, 275, 278, 277, 520, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+    258, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
+    258, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
+
 
 START::~START()
 {
@@ -29,24 +30,14 @@ void START::initialise()
 {
     m_state.next_scene_id = -1;
     
-    GLuint map_texture_id = Utility::load_texture("assets/images/tileset.png");
-    m_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, START_DATA, map_texture_id, 1.0f, 9, 10);
+    GLuint map_texture_id = Utility::load_texture("assets/images/spritesheet.png");
+    m_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, START_DATA, map_texture_id, 1.0f, 64, 64);
     
-    // Code from main.cpp's initialise()
-    /**
-     George's Stuff
-     */
     // Existing
     m_state.player = new Entity();
     m_state.enemies = new Entity[ENEMY_COUNT];
    
         
-        //font
-//        g_font_texture_id = load_texture(FONT_FILEPAHT);
-        
-    /**
-     BGM and SFX
-     */
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
     
     m_state.bgm = Mix_LoadMUS("assets/audio/barriers.mp3");
@@ -66,6 +57,7 @@ void START::render(ShaderProgram *program)
 {
 //    std::cout<<m_state.enemies[0].get_position().x<<std::endl;
     m_state.map->render(program);
+    
     
     
 }

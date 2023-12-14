@@ -1,19 +1,22 @@
 #include "LevelB.h"
 #include "Utility.h"
 
-#define LEVEL_WIDTH 14
-#define LEVEL_HEIGHT 8
+#define LEVEL_WIDTH 12
+#define LEVEL_HEIGHT 11
 
 unsigned int LEVELB_DATA[] =
 {
-    2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
-    2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2,
-    2, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2,
-    2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2,
-    2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+0, 685, 685, 685, 685, 685, 685, 685, 685, 685, 685, 0,
+0, 685, 685, 685, 685, 685, 685, 685, 685, 685, 685, 0,
+0, 685, 685, 685, 685, 685, 685, 685, 685, 685, 685, 0,
+0, 685, 685, 685, 685, 685, 685, 685, 685, 685, 685, 0,
+0, 685, 685, 685, 685, 685, 685, 685, 685, 685, 685, 0,
+0, 685, 685, 685, 685, 685, 685, 685, 685, 685, 685, 0,
+0, 685, 685, 685, 685, 685, 685, 685, 685, 685, 685, 0,
+0, 685, 685, 685, 685, 685, 685, 685, 685, 685, 685, 0,
+0, 685, 685, 685, 685, 685, 685, 685, 685, 685, 685, 0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 LevelB::~LevelB()
@@ -29,8 +32,8 @@ void LevelB::initialise()
 {
     m_state.next_scene_id = -1;
     
-    GLuint map_texture_id = Utility::load_texture("assets/images/tileset.png");
-    m_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f, 9, 10);
+    GLuint map_texture_id = Utility::load_texture("assets/images/spritesheet.png");
+    m_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELB_DATA, map_texture_id, 1.0f, 64, 64);
     
     // Code from main.cpp's initialise()
     /**
@@ -42,7 +45,6 @@ void LevelB::initialise()
     m_state.player->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
     m_state.player->set_movement(glm::vec3(0.0f));
     m_state.player->set_speed(2.5f);
-    m_state.player->set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
     m_state.player->m_texture_id = Utility::load_texture("assets/images/him.png");
     
     // Walking
@@ -104,6 +106,7 @@ void LevelB::update(float delta_time)
 
 void LevelB::render(ShaderProgram *program)
 {
+    m_state.map->render(program);
     m_state.player->m_killed_enemies = 0;
     for (int i = 0; i < ENEMY_COUNT; i++){
         if (!m_state.enemies[i].get_is_active()){
@@ -115,9 +118,8 @@ void LevelB::render(ShaderProgram *program)
         }
     }
 //    std::cout<<m_state.enemies[0].get_position().x<<std::endl;
-    m_state.map->render(program);
     if (m_state.player->get_is_active()){
         m_state.player->render(program);
-        }
+    }
     
 }

@@ -1,7 +1,7 @@
 #pragma once
 #include "Map.h"
 
-enum EntityType { PLAYER, ENEMY };
+enum EntityType { PLAYER, ENEMY, KEYS };
 enum AIType { WALKER, GUARD, FLOAT, PACE };
 /*
 WALKER - paces back and forth
@@ -41,6 +41,7 @@ private:
 
 public:
     int m_death_count = 0;
+    int m_keys_count = 0;
     int m_killed_enemies = 0;
     // ————— STATIC VARIABLES ————— //
     static const int    SECONDS_PER_FRAME = 4;
