@@ -41,8 +41,11 @@ private:
 
 public:
     int m_death_count = 0;
-    int m_keys_count = 0;
     int m_killed_enemies = 0;
+    
+    int m_key_count = 0;
+    int m_collected_keys = 0;
+    
     // ————— STATIC VARIABLES ————— //
     static const int    SECONDS_PER_FRAME = 4;
     static const int    LEFT = 0,

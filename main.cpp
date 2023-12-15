@@ -146,7 +146,7 @@ void initialise()
     g_levels[3] = g_levelC;
     
     // Start at level START
-    switch_to_scene(g_levels[0]);
+    switch_to_scene(g_levels[3]);
     
 }
 
@@ -278,31 +278,32 @@ void update()
     g_lives_left = g_total_lives - g_real_death_counter;
     
     // Keeping track of key count
-    if (g_real_keys_counter > g_current_scene->m_state.player->m_keys_count && g_current_scene->m_state.player->m_keys_count == 0) {
-        g_current_scene->m_state.player->m_keys_count = g_real_keys_counter;
+    if (g_real_keys_counter > g_current_scene->m_state.player->m_collected_keys && g_current_scene->m_state.player->m_collected_keys == 0) {
+        g_current_scene->m_state.player->m_collected_keys = g_real_keys_counter;
     }
-    if (g_real_keys_counter != g_current_scene->m_state.player->m_keys_count) {
-        g_real_keys_counter = g_current_scene->m_state.player->m_keys_count;
+    if (g_real_keys_counter != g_current_scene->m_state.player->m_collected_keys) {
+        g_real_keys_counter = g_current_scene->m_state.player->m_collected_keys;
     }
     g_keys_left = g_total_keys - g_real_keys_counter;
     
-    cout << "keys left: " << g_keys_left << endl;
     
     //Switching Scenes//
     if (g_current_scene == g_levelA){
-        if (g_current_scene->m_state.player->get_position().x >= 7.94f && g_current_scene->m_state.player->get_position().x <= 8.01f && g_current_scene->m_state.player->get_position().y == -5.9f){
+        if (g_current_scene->m_state.player->get_position().x >= 7.94f && g_current_scene->m_state.player->get_position().x <= 8.01f && g_current_scene->m_state.player->get_position().y == -5.9f && g_current_scene->m_state.player->m_collected_keys == g_current_scene->m_number_of_keys)
+        {
             switch_to_scene(g_levelB);
+            Mix_PlayChannel(-1, g_current_scene->m_state.jump_sfx, 0);
         }
     }
-    if (g_current_scene->m_state.player->get_position().y < -10.0f) {
-        if ((g_current_scene == g_levelA || g_current_scene == g_levelB) &&
-            g_current_scene->m_state.player->m_killed_enemies == g_current_scene->m_number_of_enemies) {
-            switch_to_scene((g_current_scene == g_levelA) ? static_cast<Scene*>(g_levelB) : static_cast<Scene*>(g_levelC));
-        } else {
-            g_current_scene->m_state.player->m_death_count += 1;
-            g_current_scene->m_state.player->set_position(glm::vec3(6.0f, 0.0f, 0.0f));
+    
+    if (g_current_scene == g_levelB){
+        if (g_current_scene->m_state.player->get_position().x >= 9.81 && g_current_scene->m_state.player->get_position().x <= 9.85f && g_current_scene->m_state.player->get_position().y == -.9f && g_current_scene->m_state.player->m_collected_keys == g_current_scene->m_number_of_keys && g_current_scene->m_state.player->m_killed_enemies == g_current_scene->m_number_of_enemies){
+            switch_to_scene(g_levelC);
+            Mix_PlayChannel(-1, g_current_scene->m_state.jump_sfx, 0);
         }
     }
+    cout << "keys left: " << g_keys_left << endl;
+    
     
 }
 
@@ -318,18 +319,18 @@ void render()
     
     //  MENU SCREEN  //
     if (g_current_scene == g_start) {
-        Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("Press Enter to Start"), .34f, 0.0f, glm::vec3(3.0f, -3.0f, 0.0f));
+        Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("Press Enter to Start"), .34f, 0.0f, glm::vec3(3.0f, -1.0f, 0.0f));
     }
     // Player has no more lives left //
     if (g_lives_left <= 0) {
-        Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("You Lose!"), .54f, 0.0f, glm::vec3(5.0f, -3.0f, 0.0f));
+        Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("You Lose!"), .54f, 0.0f, glm::vec3(g_current_scene->m_state.player->get_position().x, g_current_scene->m_state.player->get_position().y, 0.0f));
         g_game_is_actually_running = false;
     }
 
     // Player wins the game //
-    if (g_current_scene == g_levelC && g_current_scene->m_state.player->m_killed_enemies == g_current_scene->m_number_of_enemies)
+    if (g_current_scene == g_levelC && g_current_scene->m_state.player->m_killed_enemies == g_current_scene->m_number_of_enemies && g_keys_left == 0)
     {
-        Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("You Win!"), .54f, 0.0f, glm::vec3(5.0f, -3.0f, 0.0f));
+        Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("You Win!"), .54f, 0.0f, glm::vec3(g_current_scene->m_state.player->get_position().x, g_current_scene->m_state.player->get_position().y, 0.0f));
         g_game_is_actually_running = false;
     }
 

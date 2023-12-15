@@ -227,12 +227,12 @@ void const Entity::check_collision_y(Entity* collidable_entities, int collidable
                 // enemy on top
                 if(collidable_entity->m_entity_type ==ENEMY){
                     this->m_death_count += 1;
-                    this->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
+                    this->set_position(glm::vec3(5.0f, -3.75f, 0.0f));
                 }
                 if(collidable_entity->m_entity_type ==KEYS){
-                    cout << "m_keys_count before: " << m_keys_count << endl;
-                    this->m_keys_count += 1;
-                    cout << "m_keys_count after: " << m_keys_count << endl;
+                    cout << "m_keys_count before: " << m_collected_keys << endl;
+                    this->m_collected_keys += 1;
+                    cout << "m_keys_count after: " << m_collected_keys << endl;
                     collidable_entity->deactivate();
                 }
             }
@@ -244,23 +244,23 @@ void const Entity::check_collision_y(Entity* collidable_entities, int collidable
                 //player on top
                 if(collidable_entity->m_entity_type ==ENEMY)
                 {
-//                    std::cout << "PLAYER ON TOP OF ENEMY" << std::endl;
+                    std::cout << "PLAYER ON TOP OF ENEMY" << std::endl;
                     collidable_entity->deactivate();
                 }
                 if(collidable_entity->m_entity_type == KEYS)
                 {
 //                  std::cout << "PLAYER ON TOP OF KEY" << std::endl;
                     collidable_entity->deactivate();
-                    cout << "m_keys_count before: " << m_keys_count << endl;
-                    this->m_keys_count += 1;
-                    cout << "m_keys_count after: " << m_keys_count << endl;
+                    cout << "m_keys_count before: " << m_collected_keys << endl;
+                    this->m_collected_keys += 1;
+                    cout << "m_keys_count after: " << m_collected_keys << endl;
                 }
         
                 //enemy on top
                 if(collidable_entity->m_entity_type ==PLAYER){
-//                    std::cout << "Enemy ON TOP OF Player" << std::endl;
+                    std::cout << "Enemy ON TOP OF Player" << std::endl;
                     collidable_entity->m_death_count += 1;
-                    collidable_entity->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
+                    collidable_entity->set_position(glm::vec3(5.0f, -3.75f, 0.0f));
                 }
                 
             }
@@ -284,22 +284,22 @@ void const Entity::check_collision_x(Entity* collidable_entities, int collidable
                 m_collided_right = true;
                 //enemy right touched him
                 if (collidable_entity->m_entity_type == PLAYER){
-//                    std::cout << "ENEMY right touched PLAYER" << std::endl;
+                    std::cout << "ENEMY right touched PLAYER" << std::endl;
                     collidable_entity->m_death_count += 1;
-                    collidable_entity->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
+                    collidable_entity->set_position(glm::vec3(5.0f, -3.75f, 0.0f));
                 }
                 if (collidable_entity->m_entity_type == ENEMY){
-//                    std::cout << "PLAYER right touched ENEMY" << std::endl;
+                    std::cout << "PLAYER right touched ENEMY" << std::endl;
                     this->m_death_count += 1;
-                    this->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
+                    this->set_position(glm::vec3(5.0f, -3.75f, 0.0f));
                 }
                 if(collidable_entity->m_entity_type == KEYS)
                 {
 //                  std::cout << "PLAYER right touched KEY" << std::endl;
                     collidable_entity->deactivate();
-                    cout << "m_keys_count before: " << m_keys_count << endl;
-                    this->m_keys_count += 1;
-                    cout << "m_keys_count after: " << m_keys_count << endl;
+                    cout << "m_keys_count before: " << m_collected_keys << endl;
+                    this->m_collected_keys += 1;
+                    cout << "m_keys_count after: " << m_collected_keys << endl;
                 }
                 
             }
@@ -309,22 +309,22 @@ void const Entity::check_collision_x(Entity* collidable_entities, int collidable
                 m_collided_left = true;
                 //enemy left touched him
                 if (collidable_entity->m_entity_type == PLAYER){
-//                    std::cout << "ENEMY left touched PLAYER" << std::endl;
+                    std::cout << "ENEMY left touched PLAYER" << std::endl;
                     collidable_entity->m_death_count += 1;
-                    collidable_entity->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
+                    collidable_entity->set_position(glm::vec3(5.0f, -3.75f, 0.0f));
                 }
                 if (collidable_entity->m_entity_type == ENEMY){
-//                    std::cout << "PLAYER left touched ENEMY" << std::endl;
+                    std::cout << "PLAYER left touched ENEMY" << std::endl;
                     this->m_death_count += 1;
-                    this->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
+                    this->set_position(glm::vec3(5.0f, -3.75f, 0.0f));
                 }
                 if(collidable_entity->m_entity_type == KEYS)
                 {
 //                  std::cout << "PLAYER left touched KEY" << std::endl;
                     collidable_entity->deactivate();
-                    cout << "m_keys_count before: " << m_keys_count << endl;
-                    this->m_keys_count += 1;
-                    cout << "m_keys_count after: " << m_keys_count << endl;
+                    cout << "m_keys_count before: " << m_collected_keys << endl;
+                    this->m_collected_keys += 1;
+                    cout << "m_keys_count after: " << m_collected_keys << endl;
                 }
             }
         }

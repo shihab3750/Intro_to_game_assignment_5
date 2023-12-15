@@ -32,6 +32,7 @@ struct GameState
 class Scene {
 public:
     int m_number_of_enemies = 1;
+    int m_number_of_keys = 5;
     
     GameState m_state;
     

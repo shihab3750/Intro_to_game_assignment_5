@@ -1,19 +1,24 @@
 #include "LevelC.h"
 #include "Utility.h"
 
-#define LEVEL_WIDTH 14
-#define LEVEL_HEIGHT 8
+#define LEVEL_WIDTH 12
+#define LEVEL_HEIGHT 11
+
+using namespace std;
 
 unsigned int LEVELC_DATA[] =
 {
-    2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-    2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-    2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-    2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-    2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-    2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2,
-    2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2,
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2
+0, 0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+0, 0,   813, 813, 813, 813, 813, 813, 813, 813, 0, 0,
+0, 0,   813, 813, 813, 813, 813, 813, 813, 813, 0,   0,
+0, 813, 813, 813, 813, 813, 813, 813, 813, 813, 0,   0,
+0, 813, 813, 813, 813, 813, 813, 813, 813, 813, 0,   0,
+0, 370, 371, 372, 373, 374, 375, 813, 813, 813, 0,   0,
+0, 434, 436, 436, 436, 436, 436, 813, 813, 813, 0,   0,
+0, 498, 436, 436, 436, 436, 436, 813, 813, 813, 0,   0,
+0, 562, 436, 436, 436, 436, 436, 813, 813, 813, 0,   0,
+0, 435, 436, 436, 436, 436, 436, 813, 813, 813, 352,   0,
+0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 LevelC::~LevelC()
@@ -29,20 +34,15 @@ void LevelC::initialise()
 {
     m_state.next_scene_id = -1;
     
-    GLuint map_texture_id = Utility::load_texture("assets/images/tileset.png");
-    m_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f, 9, 10);
+    GLuint map_texture_id = Utility::load_texture("assets/images/spritesheet.png");
+    m_state.map = new Map(LEVEL_WIDTH, LEVEL_HEIGHT, LEVELC_DATA, map_texture_id, 1.0f, 64, 64);
     
-    // Code from main.cpp's initialise()
-    /**
-     George's Stuff
-     */
     // Existing
     m_state.player = new Entity();
     m_state.player->set_entity_type(PLAYER);
-    m_state.player->set_position(glm::vec3(5.0f, 0.0f, 0.0f));
+    m_state.player->set_position(glm::vec3(5.0f, -5.75f, 0.0f));
     m_state.player->set_movement(glm::vec3(0.0f));
-    m_state.player->set_speed(2.5f);
-//    m_state.player->set_acceleration(glm::vec3(0.0f, -9.81f, 0.0f));
+    m_state.player->set_speed(1.0f);
     m_state.player->m_texture_id = Utility::load_texture("assets/images/him.png");
     
     // Walking
@@ -65,7 +65,7 @@ void LevelC::initialise()
     
     /**
      Enemies' stuff */
-    GLuint enemy_texture_id = Utility::load_texture("assets/images/Monster.png");
+    GLuint enemy_texture_id = Utility::load_texture("assets/images/monster2.png");
 
     m_state.enemies = new Entity[ENEMY_COUNT];
     
@@ -75,15 +75,35 @@ void LevelC::initialise()
     m_state.enemies[0].set_acceleration(glm::vec3(0.0f, -10.0f, 0.0f));
     m_state.enemies[0].set_movement(glm::vec3(0.0f));
     m_state.enemies[0].set_ai_type(GUARD);
-    m_state.enemies[0].set_position(glm::vec3(9.0f, 0.0f, 0.0f));
+    m_state.enemies[0].set_position(glm::vec3(8.0f, -2.0f, 0.0f));
+    m_state.enemies[0].set_width(.8f);
+    m_state.enemies[0].set_height(.8f);
+    
+    m_state.enemies[1].set_entity_type(ENEMY);
+    m_state.enemies[1].m_texture_id = enemy_texture_id;
+    m_state.enemies[1].set_speed(.5f);
+    m_state.enemies[1].set_acceleration(glm::vec3(0.0f, -10.0f, 0.0f));
+    m_state.enemies[1].set_movement(glm::vec3(0.0f));
+    m_state.enemies[1].set_ai_type(WALKER);
+    m_state.enemies[1].set_position(glm::vec3(6.0f, -6.0f, 0.0f));
+    m_state.enemies[1].set_width(.5f);
+    m_state.enemies[1].set_height(.5f);
+    
+    // Keys //
+    m_state.keys = new Entity[KEY_COUNT];
+    for (int i=0; i< KEY_COUNT; ++i){
+        m_state.keys[i].set_entity_type(KEYS);
+        m_state.keys[i].m_texture_id = Utility::load_texture("assets/images/key.png");
+        m_state.keys[i].set_movement(glm::vec3(0.0f));
+    }
+    
+    m_state.keys[0].set_position(glm::vec3(3.0f, -4.0f, 0.0f));
+    m_state.keys[1].set_position(glm::vec3(1.0f, -5.9f, 0.0f));
+    m_state.keys[2].set_position(glm::vec3(8.0f, -5.0f, 0.0f));
+    m_state.keys[3].set_position(glm::vec3(9.0f, -3.0f, 0.0f));
+    m_state.keys[4].set_position(glm::vec3(7.0f, -5.0f, 0.0f));
     
     
-        //font
-//    g_font_texture_id = load_texture(FONT_FILEPAHT);
-        
-    /**
-     BGM and SFX
-     */
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
     
     m_state.bgm = Mix_LoadMUS("assets/audio/barriers.mp3");
@@ -96,14 +116,22 @@ void LevelC::initialise()
 void LevelC::update(float delta_time)
 {
     m_state.player->update(delta_time, m_state.player, m_state.enemies, ENEMY_COUNT, m_state.map);
+    m_state.player->update(delta_time, m_state.player, m_state.keys, KEY_COUNT, m_state.map);
 
     for (int i = 0; i < ENEMY_COUNT; i++) {
         m_state.enemies[i].update(delta_time, m_state.player, m_state.player, 1, m_state.map);
     }
+    for (int i = 0; i < KEY_COUNT; i++) {
+        m_state.keys[i].update(delta_time, m_state.player, m_state.player, KEY_COUNT, m_state.map);
+    }
+    cout << m_state.player->get_position().x << ", " << m_state.player->get_position().y << endl;
 }
 
 void LevelC::render(ShaderProgram *program)
 {
+    m_state.map->render(program);
+    
+    //enemies//
     m_state.player->m_killed_enemies = 0;
     for (int i = 0; i < ENEMY_COUNT; i++){
         if (!m_state.enemies[i].get_is_active()){
@@ -111,13 +139,21 @@ void LevelC::render(ShaderProgram *program)
         }
         else{
             m_state.enemies[i].render(program);
-//            std::cout<<"NOT DEAD"<<std::endl;
         }
     }
-    std::cout<<m_state.enemies[0].get_position().x<<std::endl;
-    m_state.map->render(program);
+    //keys//
+    m_state.player->m_key_count = 0;
+    for (int i = 0; i < KEY_COUNT; i++){
+        if (!m_state.keys[i].get_is_active()){
+            m_state.player->m_key_count += 1;
+        }
+        else{
+            m_state.keys[i].render(program);
+        }
+    }
+
     if (m_state.player->get_is_active()){
         m_state.player->render(program);
-        }
+    }
     
 }

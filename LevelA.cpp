@@ -74,12 +74,18 @@ void LevelA::initialise()
     
     //keys
     // Existing
-    m_state.keys = new Entity();
-    m_state.keys->set_entity_type(KEYS);
-    m_state.keys->set_position(glm::vec3(5.0f, -3.0f, 0.0f));
-    m_state.keys->set_movement(glm::vec3(0.0f));
-    m_state.keys->m_texture_id = Utility::load_texture("assets/images/key.png");
+    m_state.keys = new Entity[KEY_COUNT];
+    for (int i=0; i< KEY_COUNT; ++i){
+        m_state.keys[i].set_entity_type(KEYS);
+        m_state.keys[i].m_texture_id = Utility::load_texture("assets/images/key.png");
+        m_state.keys[i].set_movement(glm::vec3(0.0f));
+    }
     
+    m_state.keys[0].set_position(glm::vec3(10.97f, -2.5f, 0.0f));
+    m_state.keys[1].set_position(glm::vec3(5, -5.75, 0.0f));
+    m_state.keys[2].set_position(glm::vec3(5, -3.1f, 0.0f));
+    m_state.keys[3].set_position(glm::vec3(13.0f, -5.0f, 0.0f));
+    m_state.keys[4].set_position(glm::vec3(29.0f, -6.0f, 0.0f));
         
     
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096);
@@ -118,14 +124,18 @@ void LevelA::render(ShaderProgram *program)
 //    }
     m_state.map->render(program);
     
-    if (m_state.keys->get_is_active()){
-        m_state.keys->render(program);
+    m_state.player->m_key_count = 0;
+    for (int i = 0; i < KEY_COUNT; i++){
+        if (!m_state.keys[i].get_is_active()){
+            m_state.player->m_key_count += 1;
+        }
+        else{
+            m_state.keys[i].render(program);
+        }
     }
     
-    m_state.player->render(program);
-    
-//    if (m_state.player->get_is_active()){
-//        
-//    }
+    if (m_state.player->get_is_active()){
+        m_state.player->render(program);
+    }
     
 }
