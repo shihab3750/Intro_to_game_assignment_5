@@ -102,7 +102,7 @@ void switch_to_scene(Scene *scene)
 void initialise()
 {
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
-    g_display_window = SDL_CreateWindow("Hello, Special Effects!",
+    g_display_window = SDL_CreateWindow("IDK2-Collect Coins and Don't get Killed!",
                                       SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                       WINDOW_WIDTH, WINDOW_HEIGHT,
                                       SDL_WINDOW_OPENGL);
@@ -146,7 +146,7 @@ void initialise()
     g_levels[3] = g_levelC;
     
     // Start at level START
-    switch_to_scene(g_levels[3]);
+    switch_to_scene(g_levels[0]);
     
 }
 
@@ -254,7 +254,7 @@ void update()
     // Prevent the camera from showing anything outside of the "edge" of the level
     g_view_matrix = glm::mat4(1.0f);
     if (g_current_scene->m_state.player->get_position().x > LEVEL1_LEFT_EDGE) {
-        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-g_current_scene->m_state.player->get_position().x, 3.75, 0));
+        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-g_current_scene->m_state.player->get_position().x, 0.75, 0));
     }
     else {
         g_view_matrix = glm::translate(g_view_matrix, glm::vec3(-5, 3.75, 0));
@@ -265,8 +265,16 @@ void update()
         g_view_matrix = glm::translate(g_view_matrix, glm::vec3(0, -g_current_scene->m_state.player->get_position().y + -3.75f, 0));
     }
     else {
-        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(0, -3.75f, 0));  // Adjust the fixed vertical position as needed
+        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(0, 0.0f, 0));  // Adjust the fixed vertical position as needed
     }
+    
+    // Prevent the camera from showing anything outside of the "top" of the level
+//    if (g_current_scene->m_state.player->get_position().y < LEVEL1_BOTTOM_EDGE) {
+//        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(0, -g_current_scene->m_state.player->get_position().y + -3.75f, 0));
+//    }
+//    else {
+//        g_view_matrix = glm::translate(g_view_matrix, glm::vec3(0, -3.75f, 0));  // Adjust the fixed vertical position as needed
+//    }
     
     // Keeping track of death count
     if (g_real_death_counter > g_current_scene->m_state.player->m_death_count && g_current_scene->m_state.player->m_death_count == 0) {
@@ -295,9 +303,12 @@ void update()
             Mix_PlayChannel(-1, g_current_scene->m_state.jump_sfx, 0);
         }
     }
-    
+    cout << "Collected Keys: " << g_current_scene->m_state.player->m_collected_keys<<endl<< "Keys in Scene: "<< g_current_scene->m_number_of_keys;
+    cout << "Killed Enmies: " << g_current_scene->m_state.player->m_killed_enemies << endl << "Number of Enemies: " << g_current_scene->m_number_of_enemies<<endl;
     if (g_current_scene == g_levelB){
-        if (g_current_scene->m_state.player->get_position().x >= 9.81 && g_current_scene->m_state.player->get_position().x <= 9.85f && g_current_scene->m_state.player->get_position().y == -.9f && g_current_scene->m_state.player->m_collected_keys == g_current_scene->m_number_of_keys && g_current_scene->m_state.player->m_killed_enemies == g_current_scene->m_number_of_enemies){
+        if (g_current_scene->m_state.player->m_collected_keys - 5 == g_current_scene->m_number_of_keys)
+        {
+            cout<< "Switch to Level c" << endl;
             switch_to_scene(g_levelC);
             Mix_PlayChannel(-1, g_current_scene->m_state.jump_sfx, 0);
         }
@@ -316,7 +327,7 @@ void render()
     glUseProgram(g_shader_program.get_program_id());
     g_current_scene->render(&g_shader_program);
     
-    
+    Utility::draw_text(&g_shader_program, g_text_texture_id, std::to_string(g_lives_left), .4f, 0.0f, glm::vec3(2.0f, 3.00f,0.0f));
     //  MENU SCREEN  //
     if (g_current_scene == g_start) {
         Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("Press Enter to Start"), .34f, 0.0f, glm::vec3(3.0f, -1.0f, 0.0f));
@@ -328,7 +339,7 @@ void render()
     }
 
     // Player wins the game //
-    if (g_current_scene == g_levelC && g_current_scene->m_state.player->m_killed_enemies == g_current_scene->m_number_of_enemies && g_keys_left == 0)
+    if (g_current_scene == g_levelC  && g_keys_left == 0 )
     {
         Utility::draw_text(&g_shader_program, g_text_texture_id, std::string("You Win!"), .54f, 0.0f, glm::vec3(g_current_scene->m_state.player->get_position().x, g_current_scene->m_state.player->get_position().y, 0.0f));
         g_game_is_actually_running = false;

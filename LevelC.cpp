@@ -77,7 +77,7 @@ void LevelC::initialise()
     m_state.enemies[0].set_ai_type(GUARD);
     m_state.enemies[0].set_position(glm::vec3(8.0f, -2.0f, 0.0f));
     m_state.enemies[0].set_width(.8f);
-    m_state.enemies[0].set_height(.8f);
+    m_state.enemies[0].set_height(.4f);
     
     m_state.enemies[1].set_entity_type(ENEMY);
     m_state.enemies[1].m_texture_id = enemy_texture_id;
@@ -85,9 +85,9 @@ void LevelC::initialise()
     m_state.enemies[1].set_acceleration(glm::vec3(0.0f, -10.0f, 0.0f));
     m_state.enemies[1].set_movement(glm::vec3(0.0f));
     m_state.enemies[1].set_ai_type(WALKER);
-    m_state.enemies[1].set_position(glm::vec3(6.0f, -6.0f, 0.0f));
-    m_state.enemies[1].set_width(.5f);
-    m_state.enemies[1].set_height(.5f);
+    m_state.enemies[1].set_position(glm::vec3(8.0f, -6.0f, 0.0f));
+    m_state.enemies[1].set_width(.8f);
+    m_state.enemies[0].set_height(.5f);
     
     // Keys //
     m_state.keys = new Entity[KEY_COUNT];

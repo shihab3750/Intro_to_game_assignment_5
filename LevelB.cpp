@@ -58,7 +58,7 @@ void LevelB::initialise()
     m_state.player->m_animation_cols   = 4;
     m_state.player->m_animation_rows   = 4;
     m_state.player->set_height(0.8f);
-    m_state.player->set_width(0.8f);
+    m_state.player->set_width(.8f);
     
     // Jumping
     m_state.player->m_jumping_power = 7.0f;
@@ -74,10 +74,10 @@ void LevelB::initialise()
     m_state.enemies[0].set_speed(.5f);
     m_state.enemies[0].set_acceleration(glm::vec3(0.0f, -10.0f, 0.0f));
     m_state.enemies[0].set_movement(glm::vec3(0.0f));
-    m_state.enemies[0].set_ai_type(GUARD);
+    m_state.enemies[0].set_ai_type(WALKER);
     m_state.enemies[0].set_position(glm::vec3(8.0f, -2.0f, 0.0f));
     m_state.enemies[0].set_width(.8f);
-    m_state.enemies[0].set_height(.8f);
+    m_state.enemies[0].set_height(.5f);
     
     // Keys //
     m_state.keys = new Entity[KEY_COUNT];
